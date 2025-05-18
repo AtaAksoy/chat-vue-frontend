@@ -21,7 +21,7 @@ const router = createRouter({
       component: ChatView,
       beforeEnter: () => {
         const auth = useAuthStore()
-        return auth.isAuthenticated ? true : '/login'
+        return auth.isAuthenticated() ? true : '/login'
       },
     }
   ],
