@@ -1,39 +1,110 @@
-# chat-vue-frontend
+# Vue Chat App (LLM Assistant)
 
-This template should help get you started developing with Vue 3 in Vite.
+Bu proje, Vue 3 + Pinia + ShadCN + Tailwind CSS kullanılarak geliştirilmiş bir mobil öncelikli AI destekli sohbet uygulamasıdır.  
+Kullanıcılar mesaj gönderebilir, mesajlara OpenAI tabanlı yanıtlar alabilir ve Reverb (WebSocket) ile canlı güncellemeler yapılabilir.
 
-## Recommended IDE Setup
+---
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 🚀 Özellikler
 
-## Type Support for `.vue` Imports in TS
+- Vue 3 + Composition API
+- TypeScript ile yazılmıştır
+- Tailwind CSS + ShadCN bileşenleri
+- Pinia ile global auth yönetimi
+- Vue Router ile oturum kontrolü
+- Reverb üzerinden gerçek zamanlı mesajlaşma
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+---
 
-## Customize configuration
+## 📁 Klasör Yapısı
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+```
+chat-vue-frontend/
+├── src/
+│   ├── components/
+│   ├── views/
+│   ├── stores/
+│   └── main.ts
+├── public/
+├── .env.example
+├── index.html
+└── vite.config.ts
+```
 
-## Project Setup
+---
 
-```sh
+## ⚙️ Ortam Değişkenleri (.env)
+
+`.env.example` dosyasını `.env` olarak kopyalayın ve API endpoint adresini düzenleyin:
+
+```bash
+cp .env.example .env
+```
+
+### .env.example içeriği:
+
+```env
+VITE_API_BASE_URL=http://localhost:8080
+```
+
+---
+
+## 🧪 Geliştirme Ortamı
+
+### Gerekli Kurulumlar:
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Geliştirme Sunucusu:
 
-```sh
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+Uygulama: [http://localhost:5173](http://localhost:5173)
 
-```sh
+---
+
+## 📦 Build Almak
+
+```bash
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+Çıktı `dist/` klasörüne yazılır. Bir Nginx sunucusu altında dağıtılabilir.
 
-```sh
-npm run lint
+---
+
+## 🌐 Yayınlama için Nginx Örneği
+
+```nginx
+server {
+    listen 80;
+    server_name chat.domain.com;
+
+    root /var/www/chat-vue-frontend/dist;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
 ```
+
+---
+
+## 🔐 Auth Mekanizması
+
+- Kullanıcı token’ı `localStorage` içinde tutulur
+- Auth bilgisi `Pinia` store’da takip edilir
+- Eğer token yoksa, kullanıcı `/login` sayfasına yönlendirilir
+
+---
+
+## 🧩 WebSocket (Reverb)
+
+- Laravel Reverb servisi üzerinden private channel bağlantısı yapılır
+- Kullanıcı ID’sine göre `chat.{userId}` kanalına bağlanır
+- Yeni mesajlar `.message-received` event’i ile otomatik olarak eklenir
