@@ -8,6 +8,7 @@ import { useRouter } from 'vue-router'
 import echo from '@/lib/echo'
 import { onMounted } from 'vue'
 import axios from "axios"
+import api from '@/utils/api'
 
 const auth = useAuthStore()
 const message = ref('')
@@ -19,8 +20,6 @@ const canSendMessage = ref(true)
 const messages = ref([
     { id: 1, text: 'Hi! How can I help you today?', fromMe: false },
 ])
-
-
 
 onMounted(() => {
     const userId = auth.user?.subscriberNo
@@ -61,7 +60,7 @@ const sendMessage = async () => {
     })
 
     try {
-        await axios.post('http://127.0.0.1:8080/chat/api/v1/chat', {
+        await api.post('/chat/api/v1/chat', {
             message: content,
         }, {
             headers: {
@@ -72,7 +71,6 @@ const sendMessage = async () => {
     } catch (error) {
         console.error('API error:', error)
 
-        // AI assistant'tan gibi görünecek hata mesajı
         messages.value.push({
             id: Date.now(),
             text: '❗ AI assistant could not process your request. Please try again later.',
